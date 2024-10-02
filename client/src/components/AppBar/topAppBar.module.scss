@@ -1,0 +1,14 @@
+.linkButton {
+  font-weight: bold !important;
+  font-size: 1.1rem !important;
+}
+
+.toolBarPadding {
+  margin: 0 10%;
+}
+
+@media (max-width: 600px) {
+  .toolBarPadding {
+    margin: 0 0%;
+  }
+}

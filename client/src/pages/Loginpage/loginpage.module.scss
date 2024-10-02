@@ -1,0 +1,34 @@
+.loginBoxStyle {
+  margin-top: 0.75em;
+  background-color: #ed6c02;
+  padding-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 35px;
+  & h2 {
+    margin-top: 0.75em;
+    color: white;
+  }
+}
+
+.formStyles {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2vh;
+  gap: 15px;
+  & label {
+    color: white;
+    font-weight: bolder;
+    text-align: center;
+  }
+  & button {
+    border: 2px solid black;
+    font-weight: bolder;
+  }
+}
+
+.errorMessage {
+  color: black;
+  font-weight: bolder;
+}

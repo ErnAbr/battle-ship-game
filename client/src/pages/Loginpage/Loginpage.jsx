@@ -3,6 +3,8 @@ import styles from "./loginpage.module.scss";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { Modal } from "../../components/Modal/Modal.jsx";
+import { RegisterForm } from "./RegisterFrom.jsx";
 
 export const Loginpage = () => {
   const schema = yup
@@ -43,6 +45,14 @@ export const Loginpage = () => {
               Log In
             </Button>
           </form>
+          <h4 className={styles.registerLink}>
+            Do not have an account?{" "}
+            <span>
+              <Modal buttonName="Register Here!">
+                <RegisterForm />
+              </Modal>
+            </span>
+          </h4>
         </Box>
       </Container>
     </>

@@ -8,14 +8,17 @@
   align-items: center;
   border-radius: 35px;
   & h2 {
-    margin-top: 0.75em;
     color: white;
   }
 }
 
+.loginBoxStyle h2 {
+  margin-top: 1.2em;
+}
+
 .registerBoxStyle {
   border: 1px solid black;
-  padding: 50px;
+  padding: 94px;
 
   @media (max-width: 1250px) {
     padding: 25px;

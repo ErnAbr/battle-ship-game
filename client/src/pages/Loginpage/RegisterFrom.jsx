@@ -3,8 +3,10 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import styles from "./loginpage.module.scss";
 import { Box, Button } from "@mui/material";
+import { api } from "../../api/api.js";
+import { toast } from "react-toastify";
 
-export const RegisterForm = () => {
+export const RegisterForm = ({ closeModal }) => {
   const schema = yup
     .object({
       username: yup.string().required("User Name is required"),
@@ -33,7 +35,15 @@ export const RegisterForm = () => {
     shouldFocusError: false,
   });
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const response = await api.Users.registerUser(data);
+      toast.success(response.message);
+      closeModal();
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   return (
     <>

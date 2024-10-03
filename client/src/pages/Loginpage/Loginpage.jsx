@@ -5,6 +5,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Modal } from "../../components/Modal/Modal.jsx";
 import { RegisterForm } from "./RegisterFrom.jsx";
+import { api } from "../../api/api.js";
+import { toast } from "react-toastify";
 
 export const Loginpage = () => {
   const schema = yup
@@ -23,7 +25,16 @@ export const Loginpage = () => {
     shouldFocusError: false,
   });
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const response = await api.Users.loginUser(data);
+      console.log(response);
+      // save user to store and change nav bar menu items
+      toast.success(response.message);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   return (
     <>

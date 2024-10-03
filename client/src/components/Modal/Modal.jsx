@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "./modal.module.scss";
 
 export const Modal = ({ children, buttonName }) => {
@@ -13,7 +13,7 @@ export const Modal = ({ children, buttonName }) => {
         <div className={styles.modalBackground}>
           <div className={styles.modalContent}>
             <button onClick={() => setShow(false)}>Close Form</button>
-            {children}
+            {React.cloneElement(children, { closeModal: () => setShow(false) })}
           </div>
         </div>
       )}

@@ -13,6 +13,7 @@ const requests = {
 const Users = {
   registerUser: (body) => requests.post("users", body),
   loginUser: (body) => requests.post("users/login", body),
+  logoutUser: () => requests.post("users/logout", {}),
 };
 
 export const api = {

@@ -4,11 +4,17 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Modal } from "../../components/Modal/Modal.jsx";
-import { RegisterForm } from "./RegisterFrom.jsx";
+import { RegisterForm } from "./RegisterForm.jsx";
 import { api } from "../../api/api.js";
 import { toast } from "react-toastify";
+import { useAppStore } from "../../context/store.js";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../../navigation/routes/routes.js";
 
 export const Loginpage = () => {
+  const setUser = useAppStore((state) => state.setUser);
+  const navigate = useNavigate();
+
   const schema = yup
     .object({
       username: yup.string().required("Your Username is Required"),
@@ -27,9 +33,9 @@ export const Loginpage = () => {
 
   const onSubmit = async (data) => {
     try {
+      navigate(routes.HOME);
       const response = await api.Users.loginUser(data);
-      console.log(response);
-      // save user to store and change nav bar menu items
+      setUser(response.user.username);
       toast.success(response.message);
     } catch (error) {
       toast.error(error.response.data.message);

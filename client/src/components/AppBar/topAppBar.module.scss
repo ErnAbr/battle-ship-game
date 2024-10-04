@@ -5,6 +5,8 @@
 
 .toolBarPadding {
   margin: 0 10%;
+  display: flex;
+  justify-content: space-between;
 }
 
 @media (max-width: 600px) {

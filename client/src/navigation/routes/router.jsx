@@ -9,6 +9,8 @@ import { Statspage } from "../../pages/Statspage/Statspage.jsx";
 import { MainLayout } from "../layout/MainLayout.jsx";
 import { routes } from "./routes.js";
 import { Loginpage } from "../../pages/Loginpage/Loginpage.jsx";
+import { GuestOnlyAuth } from "../auth/GuestOnlyAuth.jsx";
+import { RequireAuth } from "../auth/RequireAuth.jsx";
 
 const router = createBrowserRouter([
   {
@@ -20,12 +22,17 @@ const router = createBrowserRouter([
         element: <Homepage />,
       },
       {
-        path: routes.STATS,
-        element: <Statspage />,
+        element: <RequireAuth />,
+        children: [
+          {
+            path: routes.STATS,
+            element: <Statspage />,
+          },
+        ],
       },
       {
-        path: routes.LOGIN,
-        element: <Loginpage />,
+        element: <GuestOnlyAuth />,
+        children: [{ path: routes.LOGIN, element: <Loginpage /> }],
       },
       { path: "/not-found", element: <NotFoundPage /> },
       { path: "*", element: <Navigate replace to="/not-found" /> },

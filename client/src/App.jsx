@@ -7,7 +7,7 @@ import { AppInitializer } from "./utils/AppInitializer.jsx";
 function App() {
   return (
     <AppInitializer>
-      <Routes />;
+      <Routes />
       <ToastContainer closeOnClick position="bottom-right" theme="colored" />
     </AppInitializer>
   );

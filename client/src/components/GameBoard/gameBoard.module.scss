@@ -1,0 +1,27 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+  gap: 2px;
+}
+
+@media (max-width: 500px) {
+  .gridContainer {
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+  }
+}
+
+.gridCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lightblue;
+  border: 1px solid navy;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.gridCell:hover {
+  background-color: lightgray;
+}

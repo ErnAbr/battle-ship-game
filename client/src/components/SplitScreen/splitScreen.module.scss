@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.panel {
+  & h3 {
+    text-align: center;
+    margin: 1% 0 1% 0;
+  }
+}

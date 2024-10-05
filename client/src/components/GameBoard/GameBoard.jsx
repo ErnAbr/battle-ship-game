@@ -1,16 +1,24 @@
 import styles from "./gameBoard.module.scss";
-import { useState } from "react";
 import {
   calculateShipCoordinates,
   isValidCoordinate,
 } from "../../utils/helperFunctions.js";
+import { toast } from "react-toastify";
 
-export const GameBoard = ({ onShipPlaced }) => {
-  const [ships, setShips] = useState([]);
-
+export const GameBoard = ({
+  onShipPlaced,
+  ships = [],
+  setShips,
+  isEnemyBoard,
+}) => {
   const handleDrop = (e, startCoordinate) => {
     const shipSize = parseInt(e.dataTransfer.getData("ship-size"), 10);
-    const isHorizontal = e.dataTransfer.getData("is-horizontal") === "true"; 
+    const isHorizontal = e.dataTransfer.getData("is-horizontal") === "true";
+
+    if (isEnemyBoard) {
+      toast.error("You cannot place ships on the enemy board!");
+      return;
+    }
 
     const newShipCoordinates = calculateShipCoordinates(
       startCoordinate,
@@ -22,18 +30,17 @@ export const GameBoard = ({ onShipPlaced }) => {
       newShipCoordinates.length === 0 ||
       newShipCoordinates.some((coord) => !isValidCoordinate(coord))
     ) {
-      console.log("Invalid ship placement. Out of bounds.");
-      return; 
+      toast.warning("Invalid ship placement. Out of bounds.");
+      return;
     }
 
     if (newShipCoordinates.every((coordinate) => !ships.includes(coordinate))) {
- 
       setShips((prevShips) => [...prevShips, ...newShipCoordinates]);
 
       const shipId = parseInt(e.dataTransfer.getData("ship-id"), 10);
       onShipPlaced(shipId);
     } else {
-      console.log("Invalid ship placement. Overlapping existing ships.");
+      toast.warning("Invalid ship placement. Overlapping existing ships.");
     }
   };
 

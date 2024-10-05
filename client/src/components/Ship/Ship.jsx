@@ -11,8 +11,8 @@ export const Ship = ({ size, id }) => {
   };
 
   const handleContextMenu = (e) => {
-    e.preventDefault(); 
-    setIsHorizontal((prev) => !prev); 
+    e.preventDefault();
+    setIsHorizontal((prev) => !prev);
   };
 
   return (

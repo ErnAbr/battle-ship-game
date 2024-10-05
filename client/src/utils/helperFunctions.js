@@ -9,22 +9,23 @@ export const calculateShipCoordinates = (
   let shipCoordinates = [];
 
   if (isHorizontal) {
-    // Horizontal placement
+    const lastCol = col + size - 1;
+
+    if (lastCol > 10) return [];
+
     for (let i = 0; i < size; i++) {
       shipCoordinates.push(`${row}${col + i}`);
     }
   } else {
-    // Vertical placement
-    const newRowStart = row.charCodeAt(0);
+    const lastRow = String.fromCharCode(row.charCodeAt(0) + size - 1);
+
+    if (lastRow.charCodeAt(0) > "J".charCodeAt(0)) return [];
+
     for (let i = 0; i < size; i++) {
-      const newRow = String.fromCharCode(newRowStart + i);
+      const newRow = String.fromCharCode(row.charCodeAt(0) + i);
       shipCoordinates.push(`${newRow}${col}`);
     }
   }
 
   return shipCoordinates;
-};
-
-export const isValidPlacement = (shipCoordinates, placedShips) => {
-  return shipCoordinates.every((coord) => !placedShips.includes(coord));
 };

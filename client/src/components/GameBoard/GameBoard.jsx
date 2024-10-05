@@ -1,14 +1,16 @@
 import styles from "./gameBoard.module.scss";
 import { useState } from "react";
-import { calculateShipCoordinates } from "../../utils/helperFunctions.js";
-import { toast } from "react-toastify";
+import {
+  calculateShipCoordinates,
+  isValidCoordinate,
+} from "../../utils/helperFunctions.js";
 
 export const GameBoard = ({ onShipPlaced }) => {
   const [ships, setShips] = useState([]);
 
   const handleDrop = (e, startCoordinate) => {
     const shipSize = parseInt(e.dataTransfer.getData("ship-size"), 10);
-    const isHorizontal = true;
+    const isHorizontal = e.dataTransfer.getData("is-horizontal") === "true"; 
 
     const newShipCoordinates = calculateShipCoordinates(
       startCoordinate,
@@ -16,28 +18,22 @@ export const GameBoard = ({ onShipPlaced }) => {
       isHorizontal
     );
 
-    if (newShipCoordinates.length === 0) {
-      toast.warning("Invalid ship placement. Out of bounds.");
-      return;
+    if (
+      newShipCoordinates.length === 0 ||
+      newShipCoordinates.some((coord) => !isValidCoordinate(coord))
+    ) {
+      console.log("Invalid ship placement. Out of bounds.");
+      return; 
     }
 
     if (newShipCoordinates.every((coordinate) => !ships.includes(coordinate))) {
-      const previousShipCoordinates = e.dataTransfer
-        .getData("previous-ship-coordinates")
-        ?.split(",");
-
-      if (previousShipCoordinates) {
-        setShips((prevShips) =>
-          prevShips.filter((coord) => !previousShipCoordinates.includes(coord))
-        );
-      }
-
+ 
       setShips((prevShips) => [...prevShips, ...newShipCoordinates]);
 
       const shipId = parseInt(e.dataTransfer.getData("ship-id"), 10);
       onShipPlaced(shipId);
     } else {
-      toast.warning("Invalid ship placement. Overlapping existing ships.");
+      console.log("Invalid ship placement. Overlapping existing ships.");
     }
   };
 
@@ -56,7 +52,6 @@ export const GameBoard = ({ onShipPlaced }) => {
       <div
         key={coordinate}
         className={`${styles.gridCell} ${isShip ? styles.shipCell : ""}`}
-        onClick={() => console.log(coordinate)}
         onDrop={(e) => handleDrop(e, coordinate)}
         onDragOver={handleDragOver}
       ></div>

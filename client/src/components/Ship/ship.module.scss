@@ -1,11 +1,18 @@
 .ship {
   display: flex;
-  cursor: grab;
 }
 
-.shipCell {
+.horizontal {
+  flex-direction: row;
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.shipPart {
   width: 30px;
   height: 30px;
   background-color: blue;
-  border: 1px solid black;
+  margin: 1px;
 }

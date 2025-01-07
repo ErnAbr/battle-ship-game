@@ -4,6 +4,7 @@ import { Ship } from "../../components/Ship/Ship.jsx";
 import { SplitScreen } from "../../components/SplitScreen/SplitScreen.jsx";
 import styles from "./homepage.module.scss";
 import { Button } from "@mui/material";
+import { useAppStore } from "../../context/store.js";
 
 export const Homepage = () => {
   const initialAvailableShips = [
@@ -16,6 +17,7 @@ export const Homepage = () => {
 
   const [ships, setShips] = useState([]);
   const [availableShips, setAvailableShips] = useState(initialAvailableShips);
+  const user = useAppStore((state) => state.user);
 
   const handleShipPlacement = (shipId) => {
     setAvailableShips((prevShips) =>
@@ -46,6 +48,7 @@ export const Homepage = () => {
             onClick={() => console.log("ready")}
             color="success"
             variant="contained"
+            disabled={availableShips.length > 0 || !user}
           >
             Ready
           </Button>

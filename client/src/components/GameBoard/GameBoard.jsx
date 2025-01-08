@@ -10,6 +10,9 @@ export const GameBoard = ({
   ships = [],
   setShips,
   isEnemyBoard,
+  onCellClick,
+  hits = [],
+  misses = [],
 }) => {
   const handleDrop = (e, startCoordinate) => {
     const shipSize = parseInt(e.dataTransfer.getData("ship-size"), 10);
@@ -48,19 +51,35 @@ export const GameBoard = ({
     e.preventDefault();
   };
 
+  const handleCellClick = (coordinate) => {
+    if (isEnemyBoard && onCellClick) {
+      onCellClick(coordinate);
+    }
+  };
+
   const gridCells = [...Array(100)].map((_, index) => {
     const row = String.fromCharCode(65 + Math.floor(index / 10));
     const col = (index % 10) + 1;
     const coordinate = `${row}${col}`;
 
     const isShip = ships.includes(coordinate);
+    const isHit = hits.includes(coordinate);
+    const isMiss = misses.includes(coordinate);
+
+    let cellClass = styles.gridCell;
+    if (isShip) cellClass += ` ${styles.shipCell}`;
+    if (isHit) cellClass += ` ${styles.hitCell}`;
+    if (isMiss) cellClass += ` ${styles.missCell}`;
 
     return (
       <div
         key={coordinate}
-        className={`${styles.gridCell} ${isShip ? styles.shipCell : ""}`}
+        className={`${styles.gridCell} ${cellClass} ${
+          isShip ? styles.shipCell : ""
+        }`}
         onDrop={(e) => handleDrop(e, coordinate)}
         onDragOver={handleDragOver}
+        onClick={() => handleCellClick(coordinate)}
       ></div>
     );
   });

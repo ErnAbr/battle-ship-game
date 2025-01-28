@@ -5,6 +5,9 @@ import { SplitScreen } from "../../components/SplitScreen/SplitScreen.jsx";
 import styles from "./homepage.module.scss";
 import { Button } from "@mui/material";
 import { useAppStore } from "../../context/store.js";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:3005");
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
@@ -23,11 +26,31 @@ export const Homepage = () => {
 
   // simulated ship coordinates
   // need to setEnemyShips from Database
-  const [enemyShips, setEnemyShips] = useState(["A1", "A2", "B3", "C4", "D5"]);
+  // const [enemyShips, setEnemyShips] = useState(["A1", "A2", "B3", "C4", "D5"]);
+  const [enemyShips, setEnemyShips] = useState([]);
   const [hits, setHits] = useState([]);
   const [misses, setMisses] = useState([]);
-
   const user = useAppStore((state) => state.user);
+
+  //websocket logic
+  const gameId = "game-123";
+
+  useEffect(() => {
+    socket.emit("join-game", gameId, user, ships);
+
+    socket.on("start-game", (enemyShipData) => {
+      setEnemyShips(enemyShipData);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [gameId, user, ships]);
+
+  const startGame = () => {
+    console.log("enemy ships", enemyShips);
+    console.log("my ships", ships);
+  };
 
   const handleShipPlacement = (shipId) => {
     setAvailableShips((prevShips) =>
@@ -79,7 +102,7 @@ export const Homepage = () => {
             <Ship key={ship.id} size={ship.size} id={ship.id} />
           ))}
           <Button
-            onClick={() => console.log("ready")}
+            onClick={startGame}
             color="success"
             variant="contained"
             disabled={availableShips.length > 0 || !user}

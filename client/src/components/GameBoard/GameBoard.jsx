@@ -1,17 +1,27 @@
 import styles from "./gameBoard.module.scss";
-import { useState } from "react";
 import {
   calculateShipCoordinates,
-  isValidPlacement,
+  isValidCoordinate,
 } from "../../utils/helperFunctions.js";
+import { toast } from "react-toastify";
 
-export const GameBoard = ({ onShipPlaced }) => {
-  const [ships, setShips] = useState([]);
-
+export const GameBoard = ({
+  onShipPlaced,
+  ships = [],
+  setShips,
+  isEnemyBoard,
+  onCellClick,
+  hits = [],
+  misses = [],
+}) => {
   const handleDrop = (e, startCoordinate) => {
     const shipSize = parseInt(e.dataTransfer.getData("ship-size"), 10);
-    const shipId = parseInt(e.dataTransfer.getData("ship-id"), 10);
-    const isHorizontal = true;
+    const isHorizontal = e.dataTransfer.getData("is-horizontal") === "true";
+
+    if (isEnemyBoard) {
+      toast.error("You cannot place ships on the enemy board!");
+      return;
+    }
 
     const newShipCoordinates = calculateShipCoordinates(
       startCoordinate,
@@ -19,17 +29,32 @@ export const GameBoard = ({ onShipPlaced }) => {
       isHorizontal
     );
 
-    if (isValidPlacement(newShipCoordinates, ships)) {
+    if (
+      newShipCoordinates.length === 0 ||
+      newShipCoordinates.some((coord) => !isValidCoordinate(coord))
+    ) {
+      toast.warning("Invalid ship placement. Out of bounds.");
+      return;
+    }
+
+    if (newShipCoordinates.every((coordinate) => !ships.includes(coordinate))) {
       setShips((prevShips) => [...prevShips, ...newShipCoordinates]);
 
+      const shipId = parseInt(e.dataTransfer.getData("ship-id"), 10);
       onShipPlaced(shipId);
     } else {
-      console.log("Invalid ship placement.");
+      toast.warning("Invalid ship placement. Overlapping existing ships.");
     }
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
+  };
+
+  const handleCellClick = (coordinate) => {
+    if (isEnemyBoard && onCellClick) {
+      onCellClick(coordinate);
+    }
   };
 
   const gridCells = [...Array(100)].map((_, index) => {
@@ -38,14 +63,23 @@ export const GameBoard = ({ onShipPlaced }) => {
     const coordinate = `${row}${col}`;
 
     const isShip = ships.includes(coordinate);
+    const isHit = hits.includes(coordinate);
+    const isMiss = misses.includes(coordinate);
+
+    let cellClass = styles.gridCell;
+    if (isShip) cellClass += ` ${styles.shipCell}`;
+    if (isHit) cellClass += ` ${styles.hitCell}`;
+    if (isMiss) cellClass += ` ${styles.missCell}`;
 
     return (
       <div
         key={coordinate}
-        className={`${styles.gridCell} ${isShip ? styles.shipCell : ""}`}
-        onClick={() => console.log(coordinate)}
+        className={`${styles.gridCell} ${cellClass} ${
+          isShip ? styles.shipCell : ""
+        }`}
         onDrop={(e) => handleDrop(e, coordinate)}
         onDragOver={handleDragOver}
+        onClick={() => handleCellClick(coordinate)}
       ></div>
     );
   });

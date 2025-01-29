@@ -9,15 +9,20 @@ export const calculateShipCoordinates = (
   let shipCoordinates = [];
 
   if (isHorizontal) {
-    // Horizontal placement
+    const lastCol = col + size - 1;
+
+    if (lastCol > 10) return []; 
+
     for (let i = 0; i < size; i++) {
       shipCoordinates.push(`${row}${col + i}`);
     }
   } else {
-    // Vertical placement
-    const newRowStart = row.charCodeAt(0);
+    const lastRow = String.fromCharCode(row.charCodeAt(0) + size - 1);
+
+    if (lastRow.charCodeAt(0) > "J".charCodeAt(0)) return []; 
+
     for (let i = 0; i < size; i++) {
-      const newRow = String.fromCharCode(newRowStart + i);
+      const newRow = String.fromCharCode(row.charCodeAt(0) + i);
       shipCoordinates.push(`${newRow}${col}`);
     }
   }
@@ -25,6 +30,13 @@ export const calculateShipCoordinates = (
   return shipCoordinates;
 };
 
-export const isValidPlacement = (shipCoordinates, placedShips) => {
-  return shipCoordinates.every((coord) => !placedShips.includes(coord));
-};
+export const isValidCoordinate = (coordinate) => {
+    const row = coordinate.charAt(0);
+    const col = parseInt(coordinate.slice(1), 10);
+
+    const isRowValid = row >= 'A' && row <= 'J';
+    const isColValid = col >= 1 && col <= 10;
+  
+    return isRowValid && isColValid;
+  };
+  

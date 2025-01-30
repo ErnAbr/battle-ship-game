@@ -33,19 +33,17 @@ export const Homepage = () => {
   const user = useAppStore((state) => state.user);
 
   //websocket logic
-  const gameId = "game-123";
+  // const gameId = "game-123";
 
-  useEffect(() => {
-    socket.emit("join-game", gameId, user, ships);
+  socket.on("connect", () => {
+    console.log("Connected:", socket.id);
+  });
 
-    socket.on("start-game", (enemyShipData) => {
-      setEnemyShips(enemyShipData);
-    });
+  socket.on("disconnect", () => {
+    console.log("Disconnected");
+  });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [gameId, user, ships]);
+  //websocket logic end
 
   const startGame = () => {
     console.log("enemy ships", enemyShips);

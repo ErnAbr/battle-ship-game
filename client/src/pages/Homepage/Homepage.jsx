@@ -7,8 +7,6 @@ import { Button } from "@mui/material";
 import { useAppStore } from "../../context/store.js";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3005");
-
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
@@ -23,38 +21,11 @@ export const Homepage = () => {
 
   const [ships, setShips] = useState([]);
   const [availableShips, setAvailableShips] = useState(initialAvailableShips);
-
-  // simulated ship coordinates
-  // need to setEnemyShips from Database
-  // const [enemyShips, setEnemyShips] = useState(["A1", "A2", "B3", "C4", "D5"]);
   const [enemyShips, setEnemyShips] = useState([]);
   const [hits, setHits] = useState([]);
   const [misses, setMisses] = useState([]);
+  const [isGameStarted, setIsGameStarted] = useState(false);
   const user = useAppStore((state) => state.user);
-
-  //websocket logic
-  // const gameId = "game-123";
-
-  socket.on("connect", () => {
-    console.log("Connected:", socket.id);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Disconnected");
-  });
-
-  //websocket logic end
-
-  const startGame = () => {
-    console.log("enemy ships", enemyShips);
-    console.log("my ships", ships);
-  };
-
-  const handleShipPlacement = (shipId) => {
-    setAvailableShips((prevShips) =>
-      prevShips.filter((ship) => ship.id !== shipId)
-    );
-  };
 
   const resetBoard = useCallback(() => {
     setShips([]);
@@ -62,12 +33,53 @@ export const Homepage = () => {
     setHits([]);
     setMisses([]);
     setEnemyShips([]);
+    setIsGameStarted(false);
   }, [initialAvailableShips]);
+
+  //websocket logic
+  const gameId = "game-123";
+  const socket = io("http://localhost:3005");
+  useEffect(() => {
+    socket.on("start-game", (enemyShipsData) => {
+      console.log("Game started with enemy ships:", enemyShipsData);
+      setEnemyShips(enemyShipsData);
+      setIsGameStarted(true);
+    });
+
+    socket.on("game-over", (result) => {
+      if (result === "win") {
+        alert("Game Over! You win!");
+      } else if (result === "lose") {
+        alert("Game Over! You lose!");
+        resetBoard();
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [socket, resetBoard]);
+
+  const startGame = () => {
+    if (availableShips.length === 0) {
+      console.log("Sending ship data to server...");
+      socket.emit("join-game", gameId, user, ships);
+    }
+  };
+
+  //websocket logic end
+
+  const handleShipPlacement = (shipId) => {
+    setAvailableShips((prevShips) =>
+      prevShips.filter((ship) => ship.id !== shipId)
+    );
+  };
 
   const handleEnemyBoardClick = (coordinate) => {
     if (enemyShips.includes(coordinate)) {
       console.log(`Hit at ${coordinate}!`);
       setHits((prevHits) => [...prevHits, coordinate]);
+      socket.emit("hit", gameId, user, coordinate);
     } else {
       console.log(`Miss at ${coordinate}`);
       setMisses((prevMisses) => [...prevMisses, coordinate]);
@@ -103,11 +115,16 @@ export const Homepage = () => {
             onClick={startGame}
             color="success"
             variant="contained"
-            disabled={availableShips.length > 0 || !user}
+            disabled={availableShips.length > 0 || !user || isGameStarted}
           >
             Ready
           </Button>
-          <Button onClick={resetBoard} color="warning" variant="contained">
+          <Button
+            onClick={resetBoard}
+            color="warning"
+            variant="contained"
+            disabled={isGameStarted}
+          >
             Reset
           </Button>
         </div>

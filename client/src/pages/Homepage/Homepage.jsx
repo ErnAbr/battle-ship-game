@@ -6,15 +6,16 @@ import styles from "./homepage.module.scss";
 import { Button, CircularProgress } from "@mui/material";
 import { useAppStore } from "../../context/store.js";
 import { io } from "socket.io-client";
+import { toast } from "react-toastify";
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      { size: 3, id: 2 },
-      { size: 3, id: 3 },
-      { size: 4, id: 4 },
-      { size: 5, id: 5 },
+      // { size: 3, id: 2 },
+      // { size: 3, id: 3 },
+      // { size: 4, id: 4 },
+      // { size: 5, id: 5 },
     ],
     []
   );
@@ -56,15 +57,15 @@ export const Homepage = () => {
     socketRef.current.on("game-over", (result) => {
       console.log("result is", result);
       if (result === "win") {
-        alert("Game Over! You win!");
+        toast.success("Game Over! You win!");
       } else if (result === "lose") {
-        alert("Game Over! You lose!");
+        toast.error("Game Over! You lose!");
       }
       resetBoard();
     });
 
     socketRef.current.on("your-turn", () => {
-      alert("It's your turn!");
+      toast.success("It's your turn!");
       setIsMyTurn(true);
     });
 
@@ -96,7 +97,7 @@ export const Homepage = () => {
 
   const handleEnemyBoardClick = (coordinate) => {
     if (!isMyTurn) {
-      alert("It's not your turn!");
+      toast.warning("It's not your turn!");
       return;
     }
     if (enemyShips.includes(coordinate)) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { GameBoard } from "../../components/GameBoard/GameBoard.jsx";
 import { Ship } from "../../components/Ship/Ship.jsx";
 import { SplitScreen } from "../../components/SplitScreen/SplitScreen.jsx";
@@ -11,10 +11,10 @@ export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      { size: 3, id: 2 },
-      { size: 3, id: 3 },
-      { size: 4, id: 4 },
-      { size: 5, id: 5 },
+      // { size: 3, id: 2 },
+      // { size: 3, id: 3 },
+      // { size: 4, id: 4 },
+      // { size: 5, id: 5 },
     ],
     []
   );
@@ -38,27 +38,35 @@ export const Homepage = () => {
 
   //websocket logic
   const gameId = "game-123";
-  const socket = io("http://localhost:3005");
+  const socketRef = useRef(null);
+
   useEffect(() => {
-    socket.on("start-game", (enemyShipsData) => {
-      console.log("Game started with enemy ships:", enemyShipsData);
+    if (!socketRef.current) {
+      socketRef.current = io("http://localhost:3005");
+    }
+
+    socketRef.current.on("start-game", (enemyShipsData) => {
       setEnemyShips(enemyShipsData);
       setIsGameStarted(true);
     });
 
-    socket.on("game-over", (result) => {
+    socketRef.current.on("game-over", (result) => {
+      console.log("result is", result);
       if (result === "win") {
         alert("Game Over! You win!");
       } else if (result === "lose") {
         alert("Game Over! You lose!");
-        resetBoard();
       }
+      resetBoard();
     });
 
     return () => {
-      socket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
-  }, [socket, resetBoard]);
+  }, [resetBoard]);
 
   const startGame = () => {
     if (availableShips.length === 0) {
@@ -75,6 +83,8 @@ export const Homepage = () => {
     );
   };
 
+  const socket = socketRef.current;
+
   const handleEnemyBoardClick = (coordinate) => {
     if (enemyShips.includes(coordinate)) {
       console.log(`Hit at ${coordinate}!`);
@@ -85,17 +95,6 @@ export const Homepage = () => {
       setMisses((prevMisses) => [...prevMisses, coordinate]);
     }
   };
-
-  useEffect(() => {
-    const allHits = enemyShips.every((ship) => hits.includes(ship));
-
-    if (allHits && enemyShips.length > 0) {
-      setTimeout(() => {
-        alert("Game Over! You win!");
-        resetBoard();
-      }, 200);
-    }
-  }, [hits, enemyShips, resetBoard]);
 
   return (
     <SplitScreen>

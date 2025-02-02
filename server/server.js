@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
 
   socket.on("join-game", (gameId, user, ships) => {
     if (!games[gameId]) {
-      games[gameId] = { players: {}, hits: {}, ships: {} };
+      games[gameId] = { players: {}, hits: {}, ships: {}, currentTurn: null };
     }
 
     games[gameId].players[user] = { socketId: socket.id };
@@ -33,6 +33,8 @@ io.on("connection", (socket) => {
     if (Object.keys(games[gameId].players).length === 2) {
       const players = Object.keys(games[gameId].players);
       const [player1, player2] = players;
+
+      games[gameId].currentTurn = player1;
 
       const player1Ships = games[gameId].ships[player1];
       const player2Ships = games[gameId].ships[player1];
@@ -45,6 +47,8 @@ io.on("connection", (socket) => {
         "start-game",
         player1Ships
       );
+
+      io.to(games[gameId].players[player1].socketId).emit("your-turn");
     }
   });
 
@@ -64,6 +68,8 @@ io.on("connection", (socket) => {
     }
 
     const opponentShips = games[gameId].ships[opponent];
+
+    console.log("test", coordinate);
 
     if (opponentShips.includes(coordinate)) {
       if (!games[gameId].hits[user]) {
@@ -85,7 +91,17 @@ io.on("connection", (socket) => {
         );
 
         delete games[gameId];
+        return;
       }
+
+      games[gameId].currentTurn = opponent;
+      io.to(games[gameId].players[opponent].socketId).emit("your-turn");
+    } else {
+      console.log(
+        `${user} missed at ${coordinate}. Now it's ${opponent}'s turn!`
+      );
+      games[gameId].currentTurn = opponent;
+      io.to(games[gameId].players[opponent].socketId).emit("your-turn");
     }
   });
 

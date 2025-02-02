@@ -1,13 +1,11 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { GameBoard } from "../../components/GameBoard/GameBoard.jsx";
 import { Ship } from "../../components/Ship/Ship.jsx";
 import { SplitScreen } from "../../components/SplitScreen/SplitScreen.jsx";
 import styles from "./homepage.module.scss";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { useAppStore } from "../../context/store.js";
 import { io } from "socket.io-client";
-
-const socket = io("http://localhost:3005");
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
@@ -23,40 +21,13 @@ export const Homepage = () => {
 
   const [ships, setShips] = useState([]);
   const [availableShips, setAvailableShips] = useState(initialAvailableShips);
-
-  // simulated ship coordinates
-  // need to setEnemyShips from Database
-  // const [enemyShips, setEnemyShips] = useState(["A1", "A2", "B3", "C4", "D5"]);
   const [enemyShips, setEnemyShips] = useState([]);
   const [hits, setHits] = useState([]);
   const [misses, setMisses] = useState([]);
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isMyTurn, setIsMyTurn] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
   const user = useAppStore((state) => state.user);
-
-  //websocket logic
-  const gameId = "game-123";
-
-  useEffect(() => {
-    socket.emit("join-game", gameId, user, ships);
-
-    socket.on("start-game", (enemyShipData) => {
-      setEnemyShips(enemyShipData);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [gameId, user, ships]);
-
-  const startGame = () => {
-    console.log("enemy ships", enemyShips);
-    console.log("my ships", ships);
-  };
-
-  const handleShipPlacement = (shipId) => {
-    setAvailableShips((prevShips) =>
-      prevShips.filter((ship) => ship.id !== shipId)
-    );
-  };
 
   const resetBoard = useCallback(() => {
     setShips([]);
@@ -64,28 +35,96 @@ export const Homepage = () => {
     setHits([]);
     setMisses([]);
     setEnemyShips([]);
+    setIsGameStarted(false);
   }, [initialAvailableShips]);
 
-  const handleEnemyBoardClick = (coordinate) => {
-    if (enemyShips.includes(coordinate)) {
-      console.log(`Hit at ${coordinate}!`);
-      setHits((prevHits) => [...prevHits, coordinate]);
-    } else {
-      console.log(`Miss at ${coordinate}`);
-      setMisses((prevMisses) => [...prevMisses, coordinate]);
+  //websocket logic
+  const gameId = "game-123";
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    if (!socketRef.current) {
+      socketRef.current = io("http://localhost:3005");
+    }
+
+    socketRef.current.on("start-game", (enemyShipsData) => {
+      setEnemyShips(enemyShipsData);
+      setIsGameStarted(true);
+      setIsWaiting(false);
+    });
+
+    socketRef.current.on("game-over", (result) => {
+      console.log("result is", result);
+      if (result === "win") {
+        alert("Game Over! You win!");
+      } else if (result === "lose") {
+        alert("Game Over! You lose!");
+      }
+      resetBoard();
+    });
+
+    socketRef.current.on("your-turn", () => {
+      alert("It's your turn!");
+      setIsMyTurn(true);
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, [resetBoard]);
+
+  const startGame = () => {
+    if (availableShips.length === 0) {
+      console.log("Sending ship data to server...");
+      socket.emit("join-game", gameId, user, ships);
+      setIsWaiting(true);
     }
   };
 
-  useEffect(() => {
-    const allHits = enemyShips.every((ship) => hits.includes(ship));
+  //websocket logic end
 
-    if (allHits && enemyShips.length > 0) {
-      setTimeout(() => {
-        alert("Game Over! You win!");
-        resetBoard();
-      }, 200);
+  const handleShipPlacement = (shipId) => {
+    setAvailableShips((prevShips) =>
+      prevShips.filter((ship) => ship.id !== shipId)
+    );
+  };
+
+  const socket = socketRef.current;
+
+  const handleEnemyBoardClick = (coordinate) => {
+    if (!isMyTurn) {
+      alert("It's not your turn!");
+      return;
     }
-  }, [hits, enemyShips, resetBoard]);
+    if (enemyShips.includes(coordinate)) {
+      setHits((prevHits) => [...prevHits, coordinate]);
+    } else {
+      setMisses((prevMisses) => [...prevMisses, coordinate]);
+    }
+
+    socket.emit("hit", gameId, user, coordinate);
+    setIsMyTurn(false);
+  };
+
+  if (!isGameStarted && isWaiting) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          marginTop: "50px",
+        }}
+      >
+        <CircularProgress color="primary" />
+        <p>Waiting for opponent to join...</p>
+      </div>
+    );
+  }
 
   return (
     <SplitScreen>
@@ -105,11 +144,16 @@ export const Homepage = () => {
             onClick={startGame}
             color="success"
             variant="contained"
-            disabled={availableShips.length > 0 || !user}
+            disabled={availableShips.length > 0 || !user || isGameStarted}
           >
             Ready
           </Button>
-          <Button onClick={resetBoard} color="warning" variant="contained">
+          <Button
+            onClick={resetBoard}
+            color="warning"
+            variant="contained"
+            disabled={isGameStarted}
+          >
             Reset
           </Button>
         </div>

@@ -57,8 +57,6 @@ const setupSocket = (server) => {
 
       const opponentShips = games[gameId].ships[opponent];
 
-      console.log("test", coordinate);
-
       if (opponentShips.includes(coordinate)) {
         if (!games[gameId].hits[user]) {
           games[gameId].hits[user] = [];

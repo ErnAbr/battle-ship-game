@@ -12,10 +12,10 @@ export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      // { size: 3, id: 2 },
-      // { size: 3, id: 3 },
-      // { size: 4, id: 4 },
-      // { size: 5, id: 5 },
+      { size: 3, id: 2 },
+      { size: 3, id: 3 },
+      { size: 4, id: 4 },
+      { size: 5, id: 5 },
     ],
     []
   );
@@ -55,7 +55,6 @@ export const Homepage = () => {
     });
 
     socketRef.current.on("game-over", (result) => {
-      console.log("result is", result);
       if (result === "win") {
         toast.success("Game Over! You win!");
       } else if (result === "lose") {

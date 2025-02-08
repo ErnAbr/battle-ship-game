@@ -12,10 +12,10 @@ export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      { size: 3, id: 2 },
-      { size: 3, id: 3 },
-      { size: 4, id: 4 },
-      { size: 5, id: 5 },
+      // { size: 3, id: 2 },
+      // { size: 3, id: 3 },
+      // { size: 4, id: 4 },
+      // { size: 5, id: 5 },
     ],
     []
   );
@@ -39,8 +39,10 @@ export const Homepage = () => {
     setIsGameStarted(false);
   }, [initialAvailableShips]);
 
+  //tasks:
+  //1. show enemy shots on your board
+
   //websocket logic
-  const gameId = "game-123";
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export const Homepage = () => {
   const startGame = () => {
     if (availableShips.length === 0) {
       console.log("Sending ship data to server...");
-      socket.emit("join-game", gameId, user, ships);
+      socket.emit("join-game", user, ships);
       setIsWaiting(true);
     }
   };
@@ -105,7 +107,7 @@ export const Homepage = () => {
       setMisses((prevMisses) => [...prevMisses, coordinate]);
     }
 
-    socket.emit("hit", gameId, user, coordinate);
+    socket.emit("hit", user, coordinate);
     setIsMyTurn(false);
   };
 
@@ -134,12 +136,14 @@ export const Homepage = () => {
           ships={ships}
           onShipPlaced={handleShipPlacement}
         />
+
         <div className={styles.shipSelectionBoard}>
           <h3>Place Your Ships:</h3>
 
           {availableShips.map((ship) => (
             <Ship key={ship.id} size={ship.size} id={ship.id} />
           ))}
+
           <Button
             onClick={startGame}
             color="success"
@@ -148,6 +152,7 @@ export const Homepage = () => {
           >
             Ready
           </Button>
+
           <Button
             onClick={resetBoard}
             color="warning"

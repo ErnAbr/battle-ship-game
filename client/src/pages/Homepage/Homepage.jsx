@@ -7,6 +7,7 @@ import { Button, CircularProgress } from "@mui/material";
 import { useAppStore } from "../../context/store.js";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import { playHitSound, playMissSound } from "../../utils/sounds.js";
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
@@ -44,7 +45,7 @@ export const Homepage = () => {
   }, [initialAvailableShips]);
 
   //tasks:
-  //1. shot animation and sound effects
+  //1. shot animation effects
 
   //websocket logic
   const socketRef = useRef(null);
@@ -82,8 +83,10 @@ export const Homepage = () => {
     socketRef.current.on("enemy-shot", (coordinate) => {
       if (shipsRef.current.includes(coordinate)) {
         setEnemyHits((prevHits) => [...prevHits, coordinate]);
+        playHitSound();
       } else {
         setEnemyMisses((prevMisses) => [...prevMisses, coordinate]);
+        playMissSound();
       }
     });
 
@@ -120,8 +123,10 @@ export const Homepage = () => {
     }
     if (enemyShips.includes(coordinate)) {
       setHits((prevHits) => [...prevHits, coordinate]);
+      playHitSound();
     } else {
       setMisses((prevMisses) => [...prevMisses, coordinate]);
+      playMissSound();
     }
 
     socket.emit("hit", user, coordinate);

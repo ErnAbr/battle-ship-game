@@ -7,15 +7,16 @@ import { Button, CircularProgress } from "@mui/material";
 import { useAppStore } from "../../context/store.js";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import { playHitSound, playMissSound } from "../../utils/sounds.js";
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      { size: 3, id: 2 },
-      { size: 3, id: 3 },
-      { size: 4, id: 4 },
-      { size: 5, id: 5 },
+      // { size: 3, id: 2 },
+      // { size: 3, id: 3 },
+      // { size: 4, id: 4 },
+      // { size: 5, id: 5 },
     ],
     []
   );
@@ -25,6 +26,8 @@ export const Homepage = () => {
   const [enemyShips, setEnemyShips] = useState([]);
   const [hits, setHits] = useState([]);
   const [misses, setMisses] = useState([]);
+  const [enemyHits, setEnemyHits] = useState([]);
+  const [enemyMisses, setEnemyMisses] = useState([]);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isMyTurn, setIsMyTurn] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
@@ -34,14 +37,23 @@ export const Homepage = () => {
     setShips([]);
     setAvailableShips(initialAvailableShips);
     setHits([]);
+    setEnemyHits([]);
+    setEnemyMisses([]);
     setMisses([]);
     setEnemyShips([]);
     setIsGameStarted(false);
   }, [initialAvailableShips]);
 
+  //tasks:
+  //1. shot animation effects
+
   //websocket logic
-  const gameId = "game-123";
   const socketRef = useRef(null);
+  const shipsRef = useRef([]);
+
+  useEffect(() => {
+    shipsRef.current = ships;
+  }, [ships]);
 
   useEffect(() => {
     if (!socketRef.current) {
@@ -68,6 +80,16 @@ export const Homepage = () => {
       setIsMyTurn(true);
     });
 
+    socketRef.current.on("enemy-shot", (coordinate) => {
+      if (shipsRef.current.includes(coordinate)) {
+        setEnemyHits((prevHits) => [...prevHits, coordinate]);
+        playHitSound();
+      } else {
+        setEnemyMisses((prevMisses) => [...prevMisses, coordinate]);
+        playMissSound();
+      }
+    });
+
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
@@ -79,7 +101,7 @@ export const Homepage = () => {
   const startGame = () => {
     if (availableShips.length === 0) {
       console.log("Sending ship data to server...");
-      socket.emit("join-game", gameId, user, ships);
+      socket.emit("join-game", user, ships);
       setIsWaiting(true);
     }
   };
@@ -101,11 +123,13 @@ export const Homepage = () => {
     }
     if (enemyShips.includes(coordinate)) {
       setHits((prevHits) => [...prevHits, coordinate]);
+      playHitSound();
     } else {
       setMisses((prevMisses) => [...prevMisses, coordinate]);
+      playMissSound();
     }
 
-    socket.emit("hit", gameId, user, coordinate);
+    socket.emit("hit", user, coordinate);
     setIsMyTurn(false);
   };
 
@@ -133,13 +157,17 @@ export const Homepage = () => {
           setShips={setShips}
           ships={ships}
           onShipPlaced={handleShipPlacement}
+          hits={enemyHits}
+          misses={enemyMisses}
         />
+
         <div className={styles.shipSelectionBoard}>
           <h3>Place Your Ships:</h3>
 
           {availableShips.map((ship) => (
             <Ship key={ship.id} size={ship.size} id={ship.id} />
           ))}
+
           <Button
             onClick={startGame}
             color="success"
@@ -148,6 +176,7 @@ export const Homepage = () => {
           >
             Ready
           </Button>
+
           <Button
             onClick={resetBoard}
             color="warning"

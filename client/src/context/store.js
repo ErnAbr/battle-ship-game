@@ -2,9 +2,14 @@ import { toast } from "react-toastify";
 import { create } from "zustand";
 import { api } from "../api/api.js";
 
-export const useAppStore = create((set) => ({
+export const useAppStore = create((set, get) => ({
   user: null,
   setUser: (user) => {
+    if (get().user) {
+      toast.warning("You are already logged in!");
+      return;
+    }
+
     set({ user });
     localStorage.setItem("user", JSON.stringify(user));
   },

@@ -1,5 +1,6 @@
 const { Server } = require("socket.io");
 
+const { v4: uuidv4 } = require("uuid");
 const games = {};
 
 const setupSocket = (server) => {
@@ -8,8 +9,13 @@ const setupSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
 
-    socket.on("join-game", (gameId, user, ships) => {
-      if (!games[gameId]) {
+    socket.on("join-game", (user, ships) => {
+      let gameId = Object.keys(games).find(
+        (id) => Object.keys(games[id].players).length === 1
+      );
+
+      if (!gameId) {
+        gameId = uuidv4();
         games[gameId] = { players: {}, hits: {}, ships: {}, currentTurn: null };
       }
 
@@ -40,7 +46,11 @@ const setupSocket = (server) => {
       }
     });
 
-    socket.on("hit", (gameId, user, coordinate) => {
+    socket.on("hit", (user, coordinate) => {
+      const gameId = Object.keys(games).find(
+        (id) => games[id].players[user]?.socketId === socket.id
+      );
+
       if (!games[gameId]) {
         console.error(`Game ${gameId} does not exist.`);
         return;
@@ -56,6 +66,8 @@ const setupSocket = (server) => {
       }
 
       const opponentShips = games[gameId].ships[opponent];
+
+      io.to(games[gameId].players[opponent].socketId).emit("enemy-shot", coordinate);
 
       if (opponentShips.includes(coordinate)) {
         if (!games[gameId].hits[user]) {

@@ -25,6 +25,8 @@ export const Homepage = () => {
   const [enemyShips, setEnemyShips] = useState([]);
   const [hits, setHits] = useState([]);
   const [misses, setMisses] = useState([]);
+  const [enemyHits, setEnemyHits] = useState([]);
+  const [enemyMisses, setEnemyMisses] = useState([]);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isMyTurn, setIsMyTurn] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
@@ -34,16 +36,23 @@ export const Homepage = () => {
     setShips([]);
     setAvailableShips(initialAvailableShips);
     setHits([]);
+    setEnemyHits([]);
+    setEnemyMisses([]);
     setMisses([]);
     setEnemyShips([]);
     setIsGameStarted(false);
   }, [initialAvailableShips]);
 
   //tasks:
-  //1. show enemy shots on your board
+  //1. shot animation and sound effects
 
   //websocket logic
   const socketRef = useRef(null);
+  const shipsRef = useRef([]);
+
+  useEffect(() => {
+    shipsRef.current = ships;
+  }, [ships]);
 
   useEffect(() => {
     if (!socketRef.current) {
@@ -68,6 +77,14 @@ export const Homepage = () => {
     socketRef.current.on("your-turn", () => {
       toast.success("It's your turn!");
       setIsMyTurn(true);
+    });
+
+    socketRef.current.on("enemy-shot", (coordinate) => {
+      if (shipsRef.current.includes(coordinate)) {
+        setEnemyHits((prevHits) => [...prevHits, coordinate]);
+      } else {
+        setEnemyMisses((prevMisses) => [...prevMisses, coordinate]);
+      }
     });
 
     return () => {
@@ -135,6 +152,8 @@ export const Homepage = () => {
           setShips={setShips}
           ships={ships}
           onShipPlaced={handleShipPlacement}
+          hits={enemyHits}
+          misses={enemyMisses}
         />
 
         <div className={styles.shipSelectionBoard}>

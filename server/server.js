@@ -11,8 +11,10 @@ configMiddlewares(app);
 connectDB();
 
 const UserController = require("./controllers/UserController/UserController");
+const GameStatsController = require("./controllers/GameController/GameController");
 
 app.use("/api/users", UserController);
+app.use("/api/games", GameStatsController);
 
 setupSocket(httpServer);
 

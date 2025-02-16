@@ -1,6 +1,9 @@
 const { Server } = require("socket.io");
-
 const { v4: uuidv4 } = require("uuid");
+const {
+  updateGameStats,
+} = require("./controllers/GameController/helpers/updateGameStats");
+const User = require("./controllers/UserController/user.model");
 const games = {};
 
 const setupSocket = (server) => {
@@ -46,7 +49,7 @@ const setupSocket = (server) => {
       }
     });
 
-    socket.on("hit", (user, coordinate) => {
+    socket.on("hit", async (user, coordinate) => {
       const gameId = Object.keys(games).find(
         (id) => games[id].players[user]?.socketId === socket.id
       );
@@ -67,7 +70,10 @@ const setupSocket = (server) => {
 
       const opponentShips = games[gameId].ships[opponent];
 
-      io.to(games[gameId].players[opponent].socketId).emit("enemy-shot", coordinate);
+      io.to(games[gameId].players[opponent].socketId).emit(
+        "enemy-shot",
+        coordinate
+      );
 
       if (opponentShips.includes(coordinate)) {
         if (!games[gameId].hits[user]) {
@@ -82,6 +88,13 @@ const setupSocket = (server) => {
 
         if (allShipsDestroyed) {
           console.log(`Game ${gameId} is over! ${user} wins!`);
+
+          const userDoc = await User.findOne({ username: user });
+          const opponentDoc = await User.findOne({ username: opponent });
+
+          updateGameStats(userDoc._id, true);
+          updateGameStats(opponentDoc._id, false);
+
           io.to(games[gameId].players[user].socketId).emit("game-over", "win");
           io.to(games[gameId].players[opponent].socketId).emit(
             "game-over",

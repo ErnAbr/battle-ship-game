@@ -3,11 +3,12 @@ import { GameBoard } from "../../components/GameBoard/GameBoard.jsx";
 import { Ship } from "../../components/Ship/Ship.jsx";
 import { SplitScreen } from "../../components/SplitScreen/SplitScreen.jsx";
 import styles from "./homepage.module.scss";
-import { Button, CircularProgress } from "@mui/material";
+import { Button } from "@mui/material";
 import { useAppStore } from "../../context/store.js";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import { playHitSound, playMissSound } from "../../utils/sounds.js";
+import { LoadingComponent } from "../../components/LoadingComponent/LoadingComponent.jsx";
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
@@ -134,20 +135,7 @@ export const Homepage = () => {
   };
 
   if (!isGameStarted && isWaiting) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          marginTop: "50px",
-        }}
-      >
-        <CircularProgress color="primary" />
-        <p>Waiting for opponent to join...</p>
-      </div>
-    );
+    return <LoadingComponent text="Waiting for opponent to join..." />;
   }
 
   return (

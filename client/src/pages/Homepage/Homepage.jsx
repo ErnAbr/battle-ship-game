@@ -3,21 +3,22 @@ import { GameBoard } from "../../components/GameBoard/GameBoard.jsx";
 import { Ship } from "../../components/Ship/Ship.jsx";
 import { SplitScreen } from "../../components/SplitScreen/SplitScreen.jsx";
 import styles from "./homepage.module.scss";
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import { useAppStore } from "../../context/store.js";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import { playHitSound, playMissSound } from "../../utils/sounds.js";
 import { LoadingComponent } from "../../components/LoadingComponent/LoadingComponent.jsx";
+import { Pill } from "../../components/Pill/Pill.jsx";
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      // { size: 3, id: 2 },
-      // { size: 3, id: 3 },
-      // { size: 4, id: 4 },
-      // { size: 5, id: 5 },
+      { size: 3, id: 2 },
+      { size: 3, id: 3 },
+      { size: 4, id: 4 },
+      { size: 5, id: 5 },
     ],
     []
   );
@@ -44,9 +45,6 @@ export const Homepage = () => {
     setEnemyShips([]);
     setIsGameStarted(false);
   }, [initialAvailableShips]);
-
-  //tasks:
-  //1. shot animation effects
 
   //websocket logic
   const socketRef = useRef(null);
@@ -150,12 +148,22 @@ export const Homepage = () => {
         />
 
         <div className={styles.shipSelectionBoard}>
-          <h3>Place Your Ships:</h3>
-
+          <div className={styles.titleContainer}>
+            <h3>Place Your Ships:</h3>
+            <Tooltip
+              title="Change horizontal/vertical positions of a 
+              ship by right clicking and just drag your ships to the board!"
+              arrow
+              placement="right-end"
+            >
+              <div>
+                <Pill text="i" size="small" />
+              </div>
+            </Tooltip>
+          </div>
           {availableShips.map((ship) => (
             <Ship key={ship.id} size={ship.size} id={ship.id} />
           ))}
-
           <Button
             onClick={startGame}
             color="success"
@@ -164,7 +172,6 @@ export const Homepage = () => {
           >
             Ready
           </Button>
-
           <Button
             onClick={resetBoard}
             color="warning"

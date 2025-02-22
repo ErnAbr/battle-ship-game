@@ -13,8 +13,8 @@ const GameStatsSchema = new mongoose.Schema({
 
 GameStatsSchema.set("toJSON", {
   transform: function (_, ret) {
-    ret.id = ret._id;
     delete ret._id;
+    delete ret.user;
     delete ret.__v;
     return ret;
   },

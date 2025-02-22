@@ -2,12 +2,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
   background-color: inherit;
   color: white;
   border-radius: 50%;
-  font-size: 2rem;
   font-weight: bold;
+}
+
+.big {
+  width: 50px;
+  height: 50px;
+  font-size: 2rem;
   border: 2px solid white;
+}
+
+.small {
+  width: 10px;
+  height: 10px;
+  color: black;
+  border: 2px solid black;
+  font-size: 1vh;
+}
+
+.small:hover {
+  cursor: default;
 }

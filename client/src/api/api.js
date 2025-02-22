@@ -16,6 +16,11 @@ const Users = {
   logoutUser: () => requests.post("users/logout", {}),
 };
 
+const GameStats = {
+  getStats: () => requests.get("games"),
+};
+
 export const api = {
   Users,
+  GameStats,
 };

@@ -19,6 +19,7 @@
   background-color: lightblue;
   border: 1px solid navy;
   cursor: pointer;
+
   font-weight: bold;
 }
 
@@ -33,10 +34,38 @@
   align-items: center;
 }
 
+@keyframes hitAnimation {
+  0% {
+    background-color: rgba(255, 0, 0, 0.8);
+    transform: scale(1.1);
+  }
+  100% {
+    background-color: red;
+    transform: scale(1);
+  }
+}
+
+@keyframes missAnimation {
+  0% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+  50% {
+    background-color: rgba(128, 128, 128, 0.7);
+    transform: scale(1.2);
+  }
+  100% {
+    background-color: gray;
+    transform: scale(1);
+  }
+}
+
 .hitCell {
   background-color: red;
+  animation: hitAnimation 0.5s ease-out;
 }
 
 .missCell {
   background-color: gray;
+  animation: missAnimation 0.5s ease-out;
 }

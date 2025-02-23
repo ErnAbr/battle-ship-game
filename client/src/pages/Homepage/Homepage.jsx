@@ -15,10 +15,10 @@ export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      { size: 3, id: 2 },
-      { size: 3, id: 3 },
-      { size: 4, id: 4 },
-      { size: 5, id: 5 },
+      // { size: 3, id: 2 },
+      // { size: 3, id: 3 },
+      // { size: 4, id: 4 },
+      // { size: 5, id: 5 },
     ],
     []
   );
@@ -151,8 +151,9 @@ export const Homepage = () => {
           <div className={styles.titleContainer}>
             <h3>Place Your Ships:</h3>
             <Tooltip
-              title="Change horizontal/vertical positions of a 
-              ship by right clicking and just drag your ships to the board!"
+              title="Change horizontal to vertical positions of a 
+              ship by right clicking and drag your ships to the board! To change ship placement
+              just press Reset"
               arrow
               placement="right-end"
             >

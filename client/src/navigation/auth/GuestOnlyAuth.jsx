@@ -6,12 +6,16 @@ import { Navigate, Outlet } from "react-router-dom";
 
 export const GuestOnlyAuth = () => {
   const user = useAppStore((state) => state.user);
+  const isLoggingIn = useAppStore((state) => state.isLoggingIn);
+
+  console.log("state", isLoggingIn);
 
   useEffect(() => {
-    if (user) {
+    if (user && !isLoggingIn) {
       toast.error("You Are Already Logged In");
     }
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return user ? <Navigate to={routes.HOME} /> : <Outlet />;
 };

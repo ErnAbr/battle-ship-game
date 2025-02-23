@@ -3,6 +3,8 @@ import { create } from "zustand";
 import { api } from "../api/api.js";
 
 export const useAppStore = create((set, get) => ({
+  isLoggingIn: true,
+  setIsLoggingIn: (status) => set({ isLoggingIn: status }),
   user: null,
   setUser: (user) => {
     if (get().user) {

@@ -14,9 +14,15 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  repPassword: {
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
     type: String,
-    required: true,
+  },
+  verificationTokenExpires: {
+    type: Date,
   },
 });
 
@@ -40,6 +46,8 @@ UserSchema.set("toJSON", {
     delete ret._id;
     delete ret.__v;
     delete ret.password;
+    delete ret.verificationToken;
+    delete ret.verificationTokenExpires;
     return ret;
   },
 });

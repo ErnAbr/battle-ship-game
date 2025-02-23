@@ -8,8 +8,6 @@ export const GuestOnlyAuth = () => {
   const user = useAppStore((state) => state.user);
   const isLoggingIn = useAppStore((state) => state.isLoggingIn);
 
-  console.log("state", isLoggingIn);
-
   useEffect(() => {
     if (user && !isLoggingIn) {
       toast.error("You Are Already Logged In");

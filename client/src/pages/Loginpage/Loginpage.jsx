@@ -13,6 +13,7 @@ import { routes } from "../../navigation/routes/routes.js";
 
 export const Loginpage = () => {
   const setUser = useAppStore((state) => state.setUser);
+  const isLoggingIn = useAppStore((state) => state.setIsLoggingIn);
   const navigate = useNavigate();
 
   const schema = yup
@@ -33,12 +34,15 @@ export const Loginpage = () => {
 
   const onSubmit = async (data) => {
     try {
-      navigate(routes.HOME);
       const response = await api.Users.loginUser(data);
       setUser(response.user.username);
       toast.success(response.message);
+      navigate(routes.HOME);
     } catch (error) {
       toast.error(error.response.data.message);
+      navigate(routes.LOGIN);
+    } finally {
+      isLoggingIn(false);
     }
   };
 

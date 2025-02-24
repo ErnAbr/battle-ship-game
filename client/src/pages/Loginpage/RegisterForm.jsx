@@ -37,7 +37,9 @@ export const RegisterForm = ({ closeModal }) => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await api.Users.registerUser(data);
+      // eslint-disable-next-line no-unused-vars
+      const { repPassword, ...userData } = data;
+      const response = await api.Users.registerUser(userData);
       toast.success(response.message);
       closeModal();
     } catch (error) {

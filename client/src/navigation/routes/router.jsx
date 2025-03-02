@@ -11,6 +11,7 @@ import { routes } from "./routes.js";
 import { Loginpage } from "../../pages/Loginpage/Loginpage.jsx";
 import { GuestOnlyAuth } from "../auth/GuestOnlyAuth.jsx";
 import { RequireAuth } from "../auth/RequireAuth.jsx";
+import { EmailVerification } from "../../pages/EmailVerificationPage/emailVerification.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,10 @@ const router = createBrowserRouter([
       },
       {
         element: <GuestOnlyAuth />,
-        children: [{ path: routes.LOGIN, element: <Loginpage /> }],
+        children: [
+          { path: routes.LOGIN, element: <Loginpage /> },
+          { path: routes.VERIFY, element: <EmailVerification /> },
+        ],
       },
       { path: "/not-found", element: <NotFoundPage /> },
       { path: "*", element: <Navigate replace to="/not-found" /> },

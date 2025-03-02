@@ -11,7 +11,7 @@ import { routes } from "./routes.js";
 import { Loginpage } from "../../pages/Loginpage/Loginpage.jsx";
 import { GuestOnlyAuth } from "../auth/GuestOnlyAuth.jsx";
 import { RequireAuth } from "../auth/RequireAuth.jsx";
-import { EmailVerification } from "../../pages/EmailVerificationPage/emailVerification.jsx";
+import { EmailVerification } from "../../pages/EmailVerificationPage/EmailVerification.jsx";
 
 const router = createBrowserRouter([
   {

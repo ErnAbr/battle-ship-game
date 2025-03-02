@@ -11,15 +11,14 @@ import { playHitSound, playMissSound } from "../../utils/sounds.js";
 import { LoadingComponent } from "../../components/LoadingComponent/LoadingComponent.jsx";
 import { PillComponent } from "../../components/PillComponent/PillComponent.jsx";
 
-
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      // { size: 3, id: 2 },
-      // { size: 3, id: 3 },
-      // { size: 4, id: 4 },
-      // { size: 5, id: 5 },
+      { size: 3, id: 2 },
+      { size: 3, id: 3 },
+      { size: 4, id: 4 },
+      { size: 5, id: 5 },
     ],
     []
   );
@@ -58,7 +57,7 @@ export const Homepage = () => {
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io(import.meta.env.VITE_SOCKET_URL, {
-        withCredentials: true,  
+        withCredentials: true,
       });
     }
 

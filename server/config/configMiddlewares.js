@@ -10,8 +10,6 @@ const configMiddlewares = (server) => {
     cors({
       origin: [process.env.ORIGIN, "https://soundbible.com"],
       credentials: true,
-      methods: "GET, POST",
-      allowedHeaders: "Content-Type",
     })
   );
 };

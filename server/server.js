@@ -31,5 +31,3 @@ const PORT = process.env.PORT || 3005;
 httpServer.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
-
-console.log("CORS Origin:", process.env.ORIGIN);

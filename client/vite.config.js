@@ -8,7 +8,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@components": "client/src/components",
+      "@components": "/src/components",
     },
   },
 });

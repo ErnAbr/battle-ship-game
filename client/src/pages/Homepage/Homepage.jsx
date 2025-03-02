@@ -11,7 +11,6 @@ import { playHitSound, playMissSound } from "../../utils/sounds.js";
 import { LoadingComponent } from "../../components/LoadingComponent/LoadingComponent.jsx";
 import { PillComponent } from "../../components/PillComponent/PillComponent.jsx";
 
-
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
@@ -57,7 +56,9 @@ export const Homepage = () => {
 
   useEffect(() => {
     if (!socketRef.current) {
-      socketRef.current = io("http://localhost:3005");
+      socketRef.current = io(import.meta.env.VITE_API_URL, {
+        withCredentials: true,
+      });
     }
 
     socketRef.current.on("start-game", (enemyShipsData) => {

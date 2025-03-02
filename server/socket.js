@@ -7,7 +7,15 @@ const User = require("./controllers/UserController/user.model");
 const games = {};
 
 const setupSocket = (server) => {
-  const io = new Server(server, { cors: { origin: "*" } });
+  const io = new Server(server, {
+    cors: {
+      origin:
+        process.env.ORIGIN ||
+        "https://battle-ship-game-6d81c130c5a3.herokuapp.com",
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
+  });
 
   io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);

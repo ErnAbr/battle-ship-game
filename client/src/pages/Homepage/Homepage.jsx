@@ -11,6 +11,7 @@ import { playHitSound, playMissSound } from "../../utils/sounds.js";
 import { LoadingComponent } from "../../components/LoadingComponent/LoadingComponent.jsx";
 import { PillComponent } from "../../components/PillComponent/PillComponent.jsx";
 
+
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
@@ -56,8 +57,8 @@ export const Homepage = () => {
 
   useEffect(() => {
     if (!socketRef.current) {
-      socketRef.current = io(import.meta.env.VITE_API_URL, {
-        withCredentials: true,
+      socketRef.current = io(import.meta.env.VITE_SOCKET_URL, {
+        withCredentials: true,  
       });
     }
 

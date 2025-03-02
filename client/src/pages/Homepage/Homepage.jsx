@@ -11,6 +11,7 @@ import { playHitSound, playMissSound } from "../../utils/sounds.js";
 import { LoadingComponent } from "../../components/LoadingComponent/LoadingComponent.jsx";
 import { Pill } from "../../components/Pill/Pill.jsx";
 
+
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [

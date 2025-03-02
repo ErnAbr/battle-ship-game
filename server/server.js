@@ -12,7 +12,7 @@ configMiddlewares(app);
 connectDB();
 
 app.use(express.json({ limit: "50mb" }));
-app.use(express.static(path.join(__dirname, "../../client/dist")));
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
 const UserController = require("./controllers/UserController/UserController");
 const GameStatsController = require("./controllers/GameController/GameController");
@@ -23,7 +23,7 @@ app.use("/api/games", GameStatsController);
 setupSocket(httpServer);
 
 app.get("*", (_, res) => {
-  res.sendFile(path.join(__dirname, "../../client/dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
 
 const PORT = process.env.PORT || 3005;

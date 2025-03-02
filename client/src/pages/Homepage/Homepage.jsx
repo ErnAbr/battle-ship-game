@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import { playHitSound, playMissSound } from "../../utils/sounds.js";
 import { LoadingComponent } from "../../components/LoadingComponent/LoadingComponent.jsx";
-import { PillComponent } from "../../components/Pill/PillComponent.jsx";
+import { PillComponent } from "../../components/Pill/Pill.jsx";
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(

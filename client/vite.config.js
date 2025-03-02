@@ -6,10 +6,4 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  resolve: {
-    alias: {
-      "@": "/client/src",
-      src: "/client/src",
-    },
-  },
 });

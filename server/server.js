@@ -18,6 +18,8 @@ app.use("/api/games", GameStatsController);
 
 setupSocket(httpServer);
 
-httpServer.listen(process.env.SERVER_PORT, () => {
-  console.log(`Server is listening on port ${process.env.SERVER_PORT}`);
+const PORT = process.env.PORT || 3005;
+
+httpServer.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });

@@ -9,16 +9,16 @@ import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import { playHitSound, playMissSound } from "../../utils/sounds.js";
 import { LoadingComponent } from "../../components/LoadingComponent/LoadingComponent.jsx";
-import { PillComponent } from "../../components/Pill/PillComponent.jsx";
+import { PillComponent } from "../../components/PillComponent/PillComponent.jsx";
 
 export const Homepage = () => {
   const initialAvailableShips = useMemo(
     () => [
       { size: 2, id: 1 },
-      // { size: 3, id: 2 },
-      // { size: 3, id: 3 },
-      // { size: 4, id: 4 },
-      // { size: 5, id: 5 },
+      { size: 3, id: 2 },
+      { size: 3, id: 3 },
+      { size: 4, id: 4 },
+      { size: 5, id: 5 },
     ],
     []
   );
@@ -56,7 +56,9 @@ export const Homepage = () => {
 
   useEffect(() => {
     if (!socketRef.current) {
-      socketRef.current = io("http://localhost:3005");
+      socketRef.current = io(import.meta.env.VITE_SOCKET_URL, {
+        withCredentials: true,
+      });
     }
 
     socketRef.current.on("start-game", (enemyShipsData) => {

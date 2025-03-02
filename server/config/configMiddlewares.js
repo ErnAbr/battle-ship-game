@@ -8,7 +8,7 @@ const configMiddlewares = (server) => {
   server.use(cookieParser());
   server.use(
     cors({
-      origin: process.env.ORIGIN,
+      origin: [process.env.ORIGIN, "https://soundbible.com"],
       credentials: true,
     })
   );

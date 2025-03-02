@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import styles from "./topAppBar.module.scss";
 import { useAppStore } from "../../context/store.js";
-import { PillComponent } from "../Pill/PillComponent.jsx";
+import { PillComponent } from "../PillComponent/PillComponent.jsx";
+
 
 export const TopAppBar = () => {
   const user = useAppStore((state) => state.user);

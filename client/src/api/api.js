@@ -12,7 +12,7 @@ const requests = {
 
 const Users = {
   registerUser: (body) => requests.post("users", body),
-  loginUser: (body) => requests.post("users/login", body),
+f
   logoutUser: () => requests.post("users/logout", {}),
 };
 

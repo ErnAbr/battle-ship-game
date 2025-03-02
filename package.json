@@ -7,7 +7,7 @@
     "start": "cd server && npm install && npm run build && npm start",
     "heroku-postbuild": "cd client && npm install && npm run build",
     "deploy": "git push heroku main",
-    "serve": "cd frontend && serve -s dist"
+    "serve": "cd client && serve -s dist"
   },
   "engines": {
     "node": "20.x",

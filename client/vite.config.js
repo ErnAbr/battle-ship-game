@@ -8,8 +8,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      src: "/src",
-      "@": "/src",
+      "@": "/client/src",
+      src: "/client/src",
     },
   },
 });

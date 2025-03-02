@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import styles from "./topAppBar.module.scss";
 import { useAppStore } from "../../context/store.js";
-import { Pill } from "../Pill/Pill.jsx";
+import {  PillComponent } from "../Pill/Pill.jsx";
 
 export const TopAppBar = () => {
   const user = useAppStore((state) => state.user);
@@ -26,7 +26,7 @@ export const TopAppBar = () => {
         <Toolbar className={styles.toolBarPadding}>
           <div>
             {user ? (
-              <Pill text={user.substring(0, 1).toUpperCase()} />
+              <PillComponent text={user.substring(0, 1).toUpperCase()} />
             ) : (
               <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: "bold" }}>
                 Classic BattleShip Game
